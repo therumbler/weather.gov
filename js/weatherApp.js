@@ -11,7 +11,7 @@ function weatherApp() {
     },
     position: null,
     forecast: [],
-
+    stationName: "",
     init() {
       // Check for CORS issues in development and secure endpoints in production.
       // These endpoints use a sample gridpoint. You may wish to update these coordinates.
@@ -70,7 +70,7 @@ function weatherApp() {
       const stationResponse = await fetch(stationUrl);
       const stationData = await stationResponse.json();
       console.log("Station Data:", stationData);
-      const firstStation = stationData.features[0].properties.stationIdentifier;
+      const firstStation = stationData.features[0];
       console.log("First Station:", firstStation);
       return firstStation;
     },
@@ -78,7 +78,8 @@ function weatherApp() {
       const pointData = await this.fetchPoints();
       const stationUrl = pointData.properties.observationStations;
       const firstStation = await this.fetchFirstStation(stationUrl);
-      const currentUrl = `https://api.weather.gov/stations/${firstStation}/observations/latest`;
+      this.stationName = firstStation.properties.name;
+      const currentUrl = `https://api.weather.gov/stations/${firstStation.properties.stationIdentifier}/observations/latest`;
       this.fetchCurrent(currentUrl);
       // const hourlyUrl = `https://api.weather.gov/stations/${firstStation}/forecast`;
       const hourlyUrl = "https://api.weather.gov/gridpoints/BGM/65,32/forecast";
