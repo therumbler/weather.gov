@@ -69,6 +69,10 @@ function weatherApp() {
             time: period.startTime,
             icon: period.icon,
             name: period.name,
+            shortForecast:
+              period.shortForecast.length < 55
+                ? period.shortForecast
+                : period.shortForecast.substring(0, 55) + "...",
             shortTime: date.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

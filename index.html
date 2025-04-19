@@ -15,25 +15,25 @@
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
     ></script>
   </head>
-  <body class="bg-gray-100 p-4">
+  <body class="bg-gray-900 p-4 text-white">
     <div
       x-data="weatherApp()"
       x-init="init()"
-      class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6"
+      class="max-w-4xl mx-auto bg-gray-900 rounded-lg shadow p-6"
     >
       <!-- Current Weather Section -->
       <section class="current-weather mb-8">
         <h1 class="text-2xl font-bold mb-4 text-center">
           Current
         </h1>
-        <div class="flex flex-col md:flex-row items-center justify-around">
+        <div class="flex flex-col md:flex-row items-center">
           <!-- SVG Icon / Image -->
-          <div class="w-24 h-24 mb-4 md:mb-0">
+          <span class="w-44 h-44 mb-4 md:mb-0 mr-6 ml-auto">
             <!-- Placeholder for a flat design icon. Update this with dynamic icons based on weather -->
-            <img :src="current.icon" alt="Weather Icon" class="w-full h-full" />  
-          </div>
+            <img :src="current.icon.replace(/medium/gi, 'large')" alt="Weather Icon" class="w-full h-full" />  
+          </span>
           <!-- Weather Data -->
-          <div class="text-center md:text-left">
+          <span class="md:text-left mr-auto">
             <div class="text-lg font-semibold" x-text="current.description">
               Loading...
             </div>
@@ -41,7 +41,7 @@
               <span class="text-5xl font-extrabold" x-text="current.temperature">
                 --
               </span>
-              <span class="text-sm text-gray-500" x-text="`Feels like ${current.feels_like}`">
+              <span class="text-sm text-gray-400" x-text="`Feels like ${current.feels_like}`">
                 --
               </span>
             </div>
@@ -50,7 +50,7 @@
               <p x-text="`Gusts: ${current.wind_gust}`"></p>
               <p x-text="`Air Quality: ${current.air_quality}`"></p>
             </div>
-          </div>
+          </span>
         </div>
       </section>
 
@@ -61,20 +61,21 @@
         </h2>
         <div class="overflow-x-auto">
           <div class="flex space-x-4">
-            <template x-for="hour in forecast" :key="hour.time">
+            <template x-for="f in forecast" :key="f.time">
               <div
-                class="flex-shrink-0 bg-blue-50 rounded p-4 text-center min-w-[120px]"
+                class="flex-shrink-0 bg-gray-800 rounded p-4 text-center min-w-[120px]"
               >
-                <div class="text-sm font-semibold" x-text="hour.name">
+                <div class="text-sm font-semibold" x-text="f.name">
                   --
                 </div>
-                <div class="w-12 h-12 mx-auto my-2">
-                  <!-- Placeholder for hourly icon -->
-                  <img :src="hour.icon" alt="Hourly Icon" class="w-full h-full" />
+                <div class="w-24 h-24 mx-auto my-2">
+                  <img :src="f.icon.replace('medium', 'large')" alt="Hourly Icon" class="w-full h-full" />
                 </div>
-                <div class="text-lg font-bold" x-text="hour.temperature">
+                <div class="text-lg font-bold" x-text="f.temperature">
                   --
                 </div>
+                <div class="text-sm w-24 text-gray-500" x-text="f.shortForecast">
+                  --
               </div>
             </template>
           </div>
