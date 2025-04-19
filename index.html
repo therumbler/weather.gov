@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Weather</title>
+    <!-- Tailwind CSS (via CDN for demo purposes) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- AlpineJS -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+  </head>
+  <body class="bg-gray-100 p-4">
+    <div
+      x-data="weatherApp()"
+      x-init="init()"
+      class="max-w-4xl mx-auto bg-white rounded-lg shadow p-6"
+    >
+      <!-- Current Weather Section -->
+      <section class="current-weather mb-8">
+        <h1 class="text-2xl font-bold mb-4 text-center">
+          Current
+        </h1>
+        <div class="flex flex-col md:flex-row items-center justify-around">
+          <!-- SVG Icon / Image -->
+          <div class="w-24 h-24 mb-4 md:mb-0">
+            <!-- Placeholder for a flat design icon. Update this with dynamic icons based on weather -->
+            <img :src="current.icon" alt="Weather Icon" class="w-full h-full" />  
+          </div>
+          <!-- Weather Data -->
+          <div class="text-center md:text-left">
+            <div class="text-lg font-semibold" x-text="current.description">
+              Loading...
+            </div>
+            <div>
+              <span class="text-5xl font-extrabold" x-text="current.temperature">
+                --
+              </span>
+              <span class="text-sm text-gray-500" x-text="`Feels like ${current.feels_like}`">
+                --
+              </span>
+            </div>
+            <div class="text-sm mt-2">
+              <p x-text="`Wind: ${current.wind_speed} ${current.wind_direction}`"></p>
+              <p x-text="`Gusts: ${current.wind_gust}`"></p>
+              <p x-text="`Air Quality: ${current.air_quality}`"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hourly Forecast Section -->
+      <section class="hourly-forecast">
+        <h2 class="text-xl font-bold mb-4 text-center">
+          Forecast
+        </h2>
+        <div class="overflow-x-auto">
+          <div class="flex space-x-4">
+            <template x-for="hour in forecast" :key="hour.time">
+              <div
+                class="flex-shrink-0 bg-blue-50 rounded p-4 text-center min-w-[120px]"
+              >
+                <div class="text-sm font-semibold" x-text="hour.name">
+                  --
+                </div>
+                <div class="w-12 h-12 mx-auto my-2">
+                  <!-- Placeholder for hourly icon -->
+                  <img :src="hour.icon" alt="Hourly Icon" class="w-full h-full" />
+                </div>
+                <div class="text-lg font-bold" x-text="hour.temperature">
+                  --
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script src="./js/weatherApp.js"></script>
+  </body>
+</html>
