@@ -9,6 +9,7 @@ function weatherApp() {
       wind_gust: "-- mph",
       air_quality: "N/A",
     },
+    position: null,
     forecast: [],
 
     init() {
@@ -18,7 +19,70 @@ function weatherApp() {
         "https://api.weather.gov/stations/KAVP/observations/latest";
       const hourlyUrl = "https://api.weather.gov/gridpoints/BGM/65,32/forecast";
 
+      // this.fetchCurrent(currentUrl);
+      // this.fetchHourly(hourlyUrl);
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        console.log("Position:", position);
+        this.position = position;
+        this.fetchWeather();
+      });
+    },
+    calculateFeelsLikeTempC(tempC, dewPointC) {
+      // Step 1: Compute relative humidity
+      const e_dp = 6.11 * Math.pow(10, (7.5 * dewPointC) / (237.7 + dewPointC));
+      const e_t = 6.11 * Math.pow(10, (7.5 * tempC) / (237.7 + tempC));
+      const RH = 100 * (e_dp / e_t);
+
+      // Step 2: Convert to Fahrenheit
+      const T = (tempC * 9) / 5 + 32;
+
+      if (T < 80 || RH < 40) {
+        return tempC; // Heat index formula not valid below these values
+      }
+
+      // Step 3: Apply Heat Index formula
+      const HI =
+        -42.379 +
+        2.04901523 * T +
+        10.14333127 * RH -
+        0.22475541 * T * RH -
+        0.00683783 * T * T -
+        0.05481717 * RH * RH +
+        0.00122874 * T * T * RH +
+        0.00085282 * T * RH * RH -
+        0.00000199 * T * T * RH * RH;
+
+      // Convert back to Celsius
+      const HI_C = ((HI - 32) * 5) / 9;
+      return HI_C;
+    },
+    async fetchPoints() {
+      const lat = this.position.coords.latitude;
+      const lon = this.position.coords.longitude;
+      const pointResponse = await fetch(
+        `https://api.weather.gov/points/${lat},${lon}`
+      );
+      const pointData = await pointResponse.json();
+      console.log("Point Data:", pointData);
+      return pointData;
+    },
+    async fetchFirstStation(stationUrl) {
+      const stationResponse = await fetch(stationUrl);
+      const stationData = await stationResponse.json();
+      console.log("Station Data:", stationData);
+      const firstStation = stationData.features[0].properties.stationIdentifier;
+      console.log("First Station:", firstStation);
+      return firstStation;
+    },
+    async fetchWeather() {
+      const pointData = await this.fetchPoints();
+      const stationUrl = pointData.properties.observationStations;
+      const firstStation = await this.fetchFirstStation(stationUrl);
+      const currentUrl = `https://api.weather.gov/stations/${firstStation}/observations/latest`;
       this.fetchCurrent(currentUrl);
+      // const hourlyUrl = `https://api.weather.gov/stations/${firstStation}/forecast`;
+      const hourlyUrl = "https://api.weather.gov/gridpoints/BGM/65,32/forecast";
+
       this.fetchHourly(hourlyUrl);
     },
 
@@ -26,18 +90,26 @@ function weatherApp() {
       try {
         const res = await fetch(url);
         const data = await res.json();
-
+        console.log("Current Weather Data:", data);
+        const temperatureC = data.properties.temperature.value;
+        const temperatureF = Math.round((temperatureC * 9) / 5 + 32);
+        const feelsLikeC = this.calculateFeelsLikeTempC(
+          temperatureC,
+          data.properties.dewpoint.value
+        );
+        const feelsLikeF = Math.round((feelsLikeC * 9) / 5 + 32);
         // Map data properties accordingly.
         // The object structure from api.weather.gov may contain nested properties;
         // Adjust these mappings per the actual API response.
         this.current = {
           description: data.properties.textDescription || "No description",
-          temperature: data.properties.temperature.value
-            ? Math.round(data.properties.temperature.value) + "°F"
+          temperatureF: data.properties.temperature.value
+            ? Math.round(temperatureF) + "°F"
             : "--°F",
-          feels_like: data.properties.dewpoint.value
-            ? Math.round(data.properties.dewpoint.value) + "°F"
-            : "--°F",
+          temperatureC: data.properties.temperature.value
+            ? Math.round(temperatureC) + "°C"
+            : "--°C",
+          feels_like: feelsLikeF ? Math.round(feelsLikeF) + "°F" : "--°F",
           wind_speed: data.properties.windSpeed.value
             ? Math.round(data.properties.windSpeed.value) + " mph"
             : "-- mph",
