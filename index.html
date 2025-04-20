@@ -19,31 +19,30 @@
     <div
       x-data="weatherApp()"
       x-init="init()"
-      class="max-w-4xl mx-auto bg-gray-900 rounded-lg shadow p-6"
+      class="max-w-4xl mx-auto bg-gray-900 rounded-lg shadow"
     >
       <!-- Current Weather Section -->
-      <section class="current-weather mb-8">
+      <section x-show="current" class="current-weather mb-8">
         <h1 x-text="stationName" class="text-2xl font-bold mb-4 text-center">
           Loading...
         </h1>
-        <div class="flex flex-col md:flex-row items-center">
+        <div class="flex">
           <!-- SVG Icon / Image -->
-          <span class="w-44 h-44 mb-4 md:mb-0 mr-6 ml-auto">
-            <!-- Placeholder for a flat design icon. Update this with dynamic icons based on weather -->
+          <span class="w-44 h-44 mb-4 md:mb-0 md:mr-6">
             <img :src="current.icon.replace(/medium/gi, 'large')" alt="Weather Icon" class="w-full h-full" />  
           </span>
           <!-- Weather Data -->
-          <span class="md:text-left mr-auto">
+          <span class="text-center md:text-left md:pr-0">
             <div class="text-lg font-semibold" x-text="current.description">
               Loading...
             </div>
             <div>
-              <span class="text-5xl font-extrabold" x-text="current.temperatureF">
-                --
-              </span>
-              <span class="text-sm text-gray-400" x-text="`Feels like ${current.feels_like}`">
-                --
-              </span>
+              <div class="text-5xl font-extrabold" x-text="current.temperatureF">
+          --
+              </div>
+              <div class="text-sm text-gray-400" x-text="`Feels like ${current.feels_like}`">
+          --
+              </div>
             </div>
             <div class="text-sm mt-2">
               <p x-text="`Wind: ${current.wind_speed} ${current.wind_direction}`"></p>
