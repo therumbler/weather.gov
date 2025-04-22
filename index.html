@@ -18,11 +18,10 @@
   <body class="bg-gray-900 p-4 text-white">
     <div
       x-data="weatherApp()"
-      x-init="init()"
       class="max-w-4xl mx-auto bg-gray-900 rounded-lg shadow"
     >
       <!-- Current Weather Section -->
-      <section x-show="current" class="current-weather mb-8">
+      <section x-show="loaded" class="current-weather mb-8">
         <h1 x-text="stationName" class="text-2xl font-bold mb-4 text-center">
           Loading...
         </h1>

@@ -1,5 +1,6 @@
 function weatherApp() {
   return {
+    loaded: false,
     current: {
       description: "Loading...",
       temperature: "--°F",
@@ -8,6 +9,7 @@ function weatherApp() {
       wind_direction: "",
       wind_gust: "-- mph",
       air_quality: "N/A",
+      icon: "",
     },
     position: null,
     forecast: [],
@@ -75,16 +77,17 @@ function weatherApp() {
       return firstStation;
     },
     async fetchWeather() {
+      console.log("Fetching weather data...");
       const pointData = await this.fetchPoints();
       const stationUrl = pointData.properties.observationStations;
       const firstStation = await this.fetchFirstStation(stationUrl);
       this.stationName = firstStation.properties.name;
       const currentUrl = `https://api.weather.gov/stations/${firstStation.properties.stationIdentifier}/observations/latest`;
       this.fetchCurrent(currentUrl);
-      // const hourlyUrl = `https://api.weather.gov/stations/${firstStation}/forecast`;
-      const hourlyUrl = "https://api.weather.gov/gridpoints/BGM/65,32/forecast";
 
+      const hourlyUrl = pointData.properties.forecast;
       this.fetchHourly(hourlyUrl);
+      this.loaded = true;
     },
 
     async fetchCurrent(url) {
