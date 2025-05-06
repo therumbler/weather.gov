@@ -53,17 +53,18 @@
       </section>
 
       <!-- Hourly Forecast Section -->
-      <section class="hourly-forecast">
+      <section x-show="loaded" class="hourly-forecast">
         <h2 class="text-xl font-bold mb-4 text-center">
-          Forecast
+          Hourly
         </h2>
         <div class="overflow-x-auto">
           <div class="flex space-x-4">
+            <div x-show="!loaded" class="text-center">loading...</div>
             <template x-for="f in forecast" :key="f.time">
               <div
                 class="flex-shrink-0 bg-gray-800 rounded p-4 text-center min-w-[120px]"
               >
-                <div class="text-sm font-semibold" x-text="f.name">
+                <div class="text-sm font-semibold" x-text="new Date(f.time).toTimeString().slice(0, 5)">
                   --
                 </div>
                 <div class="w-24 h-24 mx-auto my-2">

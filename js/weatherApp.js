@@ -15,14 +15,6 @@ function weatherApp() {
     forecast: [],
     stationName: "",
     init() {
-      // Check for CORS issues in development and secure endpoints in production.
-      // These endpoints use a sample gridpoint. You may wish to update these coordinates.
-      const currentUrl =
-        "https://api.weather.gov/stations/KAVP/observations/latest";
-      const hourlyUrl = "https://api.weather.gov/gridpoints/BGM/65,32/forecast";
-
-      // this.fetchCurrent(currentUrl);
-      // this.fetchHourly(hourlyUrl);
       navigator.geolocation.getCurrentPosition(async (position) => {
         console.log("Position:", position);
         this.position = position;
@@ -59,8 +51,9 @@ function weatherApp() {
       return HI_C;
     },
     async fetchPoints() {
-      const lat = this.position.coords.latitude;
-      const lon = this.position.coords.longitude;
+      const lat = this.position.coords.latitude.toFixed(4);
+      const lon = this.position.coords.longitude.toFixed(4);
+      console.log("Latitude:", lat);
       const pointResponse = await fetch(
         `https://api.weather.gov/points/${lat},${lon}`
       );
@@ -85,7 +78,8 @@ function weatherApp() {
       const currentUrl = `https://api.weather.gov/stations/${firstStation.properties.stationIdentifier}/observations/latest`;
       this.fetchCurrent(currentUrl);
 
-      const hourlyUrl = pointData.properties.forecast;
+      const hourlyUrl = pointData.properties.forecastHourly;
+      console.log("Hourly URL:", hourlyUrl);
       this.fetchHourly(hourlyUrl);
       this.loaded = true;
     },
